@@ -1,0 +1,42 @@
+body {
+  background: $base-1;
+  font-family: Roboto;
+}
+
+.container {
+  width: 100%;
+  max-width: 1366px;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin: 0 auto;
+}
+
+a, a:hover, a:focus {
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+}
+
+.page-content {
+  padding-top: 50px;
+}
+
+.icon-action {
+  cursor: pointer;
+
+  svg {
+    transition: 300ms all;
+  }
+
+  &:hover {
+    svg {
+      stroke: $primary-1;
+    }
+  }
+}
+
+*, *::after, *::before {
+  box-sizing: border-box;
+}
