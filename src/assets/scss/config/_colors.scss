@@ -1,3 +1,7 @@
 $primary-1: #9B59B6;
 $primary-2: #C1C8CE;
 $base-1: #34495E;
+
+@function color($opacity: 1, $color: $primary-1) {
+  @return rgb($color, $opacity);
+}

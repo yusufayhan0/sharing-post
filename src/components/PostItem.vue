@@ -11,45 +11,15 @@
               <span> {{ userFullName(post) }} </span>
               {{ post.text }}
             </template>
-            <!-- <form v-else class="postform__container"> -->
 
-            <template v-else> 
-              <textarea
-                class="postform__textarea"
-                name=""
-                id=""
-                cols="30"
-                rows="10"
-                placeholder="Your text here"
-                v-model="text"
-              >
-              </textarea>
-              <div class="postform__actions">
-                <div>
-                  <VueFeather
-                    type="paperclip"
-                    stroke="#C1C8CE"
-                    stroke-width="1.5"
-                    class="postform__actions-icon action-attach icon-action"
-                    size="20"
-                    @click="fileEmit"
-                  />
-                  <img :src="base64_image" @click="deleteImage" class="postform__actions-preview" :class="{action: is_image}" alt="">
-                  <VueFeather
-                    type="smile"
-                    stroke="#C1C8CE"
-                    stroke-width="1.5"
-                    class="postform__actions-icon action-smile icon-action"
-                    size="20"
-                  />
-                  <input 
-                    type="file" 
-                    class="postform__actions--file-upload" 
-                    ref="fileUpload" 
-                    accept="image/*" 
-                    @change="fileUpload"
-                  />
-                </div>
+            <PostForm 
+              v-else
+              v-model="text"
+              v-model:file="base64_image"
+              @save="updatePost(post.id)"
+              :flat="false"
+            >
+              <template #actions="{ save }">
                 <div>
                   <VueFeather
                     type="x"
@@ -58,6 +28,7 @@
                     size="20"
                     class="icon-action post__update--close-icon"
                     title="close"
+                    @click="edit = false"
                   />
 
                   <VueFeather
@@ -67,17 +38,18 @@
                     size="20"
                     class="icon-action"
                     title="update"
+                    @click="save"
                   />
                 </div>
-              </div>
-            </template>
+              </template>
+            </PostForm>
           </div>
         </div>
       </div>
 
       <div class="post__actions">
         <div class="post__actions-like-dislike">
-          <div class="post__actions-like">
+          <div class="post__actions-like" v-if="!is_delete">
             <VueFeather
               type="thumbs-up"
               stroke="#C1C8CE"
@@ -91,7 +63,7 @@
             {{ post.like }}
           </div>
           
-          <div class="post__actions-dislike">
+          <div class="post__actions-dislike" v-if="!is_delete">
             <VueFeather
               type="thumbs-down"
               stroke="#C1C8CE"
@@ -108,6 +80,7 @@
         
         <div class="post__actions-manage">
           <VueFeather
+            v-if="!is_delete"
             type="edit-3"
             stroke="#C1C8CE"
             stroke-width="1.8"
@@ -129,7 +102,7 @@
           />
 
           <PostUndo 
-            class="post__actions-manage--undo-icon"
+            class="post__actions-manage--undo-icon icon-action"
             :class="{active: is_delete}"
             @click="deleteUndoPost(post.id)"
           />
@@ -155,8 +128,11 @@ export default {
     return {
       edit: false,
       text: '',
+      img: null,
       is_delete: false,
-      delete_post_time: null
+      delete_post_time: null,
+      base64_image: null,
+      is_image: false, 
     }
   },
   methods: {
@@ -182,6 +158,16 @@ export default {
         this.$bus.emit("update-post-list")
       })
     },
+    updatePost(post_id){
+      this.$axios.put(`posts/${post_id}`, {
+        ...this.post,
+        text: this.text
+      })
+      .then(() => {
+        this.$bus.emit("update-post-list")
+        this.edit = false
+      })
+    },
     editPost(){
       this.edit = true
       this.text = this.post.text
@@ -203,7 +189,7 @@ export default {
       .then(() => {
         this.$bus.emit("update-post-list")
       })
-    }
+    },
   },
   computed: {
     created_at(){
@@ -277,7 +263,8 @@ export default {
   &__actions {
     display: flex;
     justify-content: space-between;
-    border-top: 1px solid $primary-2;
+    border-top: 1px solid;
+    border-color: color(.6, $primary-2);
     padding: 12px 20px;
 
     &-like-dislike {

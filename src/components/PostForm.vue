@@ -1,14 +1,19 @@
 <template>
   <div class="postform">
-    <form @submit.prevent="post" class="postform__container">
+    <form 
+      @submit.prevent="click" 
+      class="postform__container" 
+      :class="{
+        [$attrs.classContainer]: $attrs.classContainer,
+        'shadow': flat
+      }"
+    >
       <textarea
         class="postform__textarea"
-        name=""
-        id=""
-        cols="30"
         rows="10"
         placeholder="Your text here"
-        v-model="text"
+        :value="modelValue"
+        @input="model = $event.target.value"
       >
       </textarea>
 
@@ -22,7 +27,15 @@
             size="20"
             @click="fileEmit"
           />
-          <img :src="base64_image" @click="deleteImage" class="postform__actions-preview" :class="{action: is_image}" alt="">
+
+          <img 
+            :src="base64_image"
+            @click="deleteImage" 
+            class="postform__actions-preview" 
+            title="delete" 
+            :class="{action: is_image}"
+          >
+
           <VueFeather
             type="smile"
             stroke="#C1C8CE"
@@ -30,18 +43,26 @@
             class="postform__actions-icon action-smile icon-action"
             size="20"
           />
+
           <input 
             type="file" 
             class="postform__actions--file-upload" 
             ref="fileUpload" 
             accept="image/*" 
-            @change="fileUpload"
+            @change="handleFileInput"
           />
         </div>
 
+        <slot 
+          name="actions" 
+          :save="click"
+        />
+
         <button 
+          v-if="!hasActions"
           type="submit" 
-          class="postform__actions-button">
+          class="postform__actions-button"
+        >
           SUBMIT
         </button>
       </div>
@@ -52,55 +73,59 @@
 <script>
 
 export default {
+  props: {
+    modelValue: {
+      type: String,
+      required: true,
+    },
+    flat: {
+      type: Boolean,
+      default: true
+    }
+  },
   data(){
     return {
       base64_image: null,
       is_image: false, 
-      text: '',
+      model: '',
     }
   },
+  computed: {
+    hasActions() {
+      return this.$slots.actions;
+    }
+  },
+  watch: {
+    model(val) {
+      this.handleTextInput(val)
+    },
+  },
   methods: {
-    post(){
-      const model = {
-        "userId": 1,
-        "img": this.base64_image,
-        "text": this.text,
-        "like": 0,
-        "dislike": 0,
-        "created_at": new Date()
-      }
-      this.$axios.post('posts', model)
-      .then(() => {
-        this.$bus.emit("update-post-list")
-        this.text = ""
-      })
-      .catch(err => {
-        console.log("error", err.response)
-      })
+    click(){
+      this.$emit('save')
+      this.deleteImage()
+    },
+    handleTextInput(value) {
+      this.$emit('input', value)
+      this.$emit('update:modelValue', value)
     },
     fileEmit(){
       this.$refs.fileUpload.click()
     },
-    async fileUpload(file){
+    async handleFileInput(file){
       if(file.target.files.length){
         this.base64_image = await this.toBase64(file.target.files[0])
+        this.$emit('update:file', this.base64_image)
         this.is_image = true
         this.$refs.fileUpload.value = null;
       }
-    },
-    toBase64(file){
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-      })
     },
     deleteImage(){
       this.is_image = false
 
       setTimeout(() => {
         this.base64_image = null
+        this.$emit('update:file', this.base64_image)
       }, 500);
     }
   }
@@ -116,14 +141,17 @@ export default {
     width: 100%;
     max-width: 1000px;
     display: inline-block;
-    height: 178px;
     background: #FFFFFF 0% 0% no-repeat padding-box;
-    box-shadow: 0px 3px 6px #00000029;
     border-radius: 5px;
     outline: none;
     border: none;
-    padding: 30px 30px 40px 30px;
+
+    &.shadow {
+      box-shadow: 0px 3px 6px #00000029;
+    }
   }
+
+
 
   &__textarea {
     width: 100%;
@@ -173,6 +201,7 @@ export default {
       height: 20px;
       transition: 500ms all;
       border-radius: 3px;
+      cursor: pointer;
 
       &.action{
         width: 20px;
