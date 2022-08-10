@@ -23,6 +23,9 @@ export default {
       base64_image: ''
     }
   },
+  mounted(){
+    document.title = "Sharing Post"
+  },
   methods: {
     file(base64image){
       this.base64_image = base64image
