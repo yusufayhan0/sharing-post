@@ -115,7 +115,7 @@ export default {
     async handleFileInput(file){
       if(file.target.files.length){
         this.base64_image = await this.toBase64(file.target.files[0])
-        this.$emit('update:file', this.base64_image)
+        this.$emit('file', this.base64_image)
         this.is_image = true
         this.$refs.fileUpload.value = null;
       }
@@ -125,7 +125,7 @@ export default {
 
       setTimeout(() => {
         this.base64_image = null
-        this.$emit('update:file', this.base64_image)
+        this.$emit('file', this.base64_image)
       }, 500);
     }
   }

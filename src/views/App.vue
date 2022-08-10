@@ -5,7 +5,7 @@
         <PostForm 
           v-model="text"
           classContainer="post-form"
-          v-model:file="base64_image"
+          @file="file"
           @save="post"
         />
         <PostList />
@@ -24,6 +24,9 @@ export default {
     }
   },
   methods: {
+    file(base64image){
+      this.base64_image = base64image
+    },
     post(){
       const model = {
         "userId": 1,
@@ -37,6 +40,7 @@ export default {
       .then(() => {
         this.$bus.emit("update-post-list")
         this.text = ""
+        this.base64_image = ""
       })
       .catch(err => {
         console.log("error", err.response)

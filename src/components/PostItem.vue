@@ -15,7 +15,7 @@
             <PostForm 
               v-else
               v-model="text"
-              v-model:file="base64_image"
+              @file="file"
               @save="updatePost(post.id)"
               :flat="false"
             >
@@ -135,6 +135,9 @@ export default {
     }
   },
   methods: {
+    file(base64image){
+      this.base64_image = base64image
+    },
     userFullName({ user }){
       return `${user.first_name} ${user.last_name}`
     },
@@ -166,6 +169,7 @@ export default {
       .then(() => {
         this.$bus.emit("update-post-list")
         this.edit = false
+        this.base64_image = ''
       })
     },
     editPost(){
