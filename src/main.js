@@ -5,6 +5,7 @@ import PostForm from "./components/PostForm.vue";
 import PostItem from "./components/PostItem.vue";
 import PostList from "./components/PostList.vue";
 import PostUndo from "./components/Icons/PostUndo.vue";
+import Attach from "./components/Icons/Attach.vue";
 import axios from "./plugins/axios"
 import mitt from 'mitt';
 import appMixin from './mixins/app.js'
@@ -21,6 +22,7 @@ const emitter = mitt();
   {name: "PostItem", value: PostItem},
   {name: "PostList", value: PostList},
   {name: "PostUndo", value: PostUndo},
+  {name: "Attach", value: Attach},
 ].forEach((componentItem) => app.component(componentItem.name, componentItem.value))
 
 app.config.globalProperties.$axios = { ...axios }

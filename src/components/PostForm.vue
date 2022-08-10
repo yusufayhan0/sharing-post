@@ -19,14 +19,18 @@
 
       <div class="postform__actions">
         <div>
-          <VueFeather
+          <Attach 
+            class="postform__actions--attach-icon icon-action"
+            @click="fileEmit"
+          />
+          <!-- <VueFeather
             type="paperclip"
             stroke="#C1C8CE"
             stroke-width="1.5"
             class="postform__actions-icon action-attach icon-action"
             size="20"
             @click="fileEmit"
-          />
+          /> -->
 
           <img 
             :src="base64_image"
@@ -205,6 +209,18 @@ export default {
 
       &.action{
         width: 20px;
+      }
+    }
+
+    &--attach-icon {
+      stroke: $primary-2;
+      stroke-width: .4;
+      transition: 300ms all;
+      width: 11px;
+      height: 19px;
+
+      &:hover {
+        stroke: $primary-1;
       }
     }
   }
