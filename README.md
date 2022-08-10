@@ -20,5 +20,11 @@ yarn build
 yarn lint
 ```
 
+### Json Server
+db folder contains db.json file
+```
+json-server --watch db.json or npx json-server --watch db.json
+```
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
