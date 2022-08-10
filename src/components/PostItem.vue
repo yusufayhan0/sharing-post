@@ -128,7 +128,6 @@ export default {
     return {
       edit: false,
       text: '',
-      img: null,
       is_delete: false,
       delete_post_time: null,
       base64_image: null,
@@ -161,7 +160,8 @@ export default {
     updatePost(post_id){
       this.$axios.put(`posts/${post_id}`, {
         ...this.post,
-        text: this.text
+        text: this.text,
+        img: this.base64_image
       })
       .then(() => {
         this.$bus.emit("update-post-list")
