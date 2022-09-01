@@ -2,7 +2,7 @@
   <div class="post">
     <div class="post__conteiner">
       <div class="post__content">
-        <img class="post__content--profile-image" src="@/assets/img/profile.png" alt="" />
+        <img class="post__content--profile-image" src="@/assets/img/profile.jpg" alt="" />
         <div class="post__update-form">
           <!-- eslint-disable-next-line vue/no-deprecated-filter -->
           <div class="post__content-date">{{ created_at }}</div>
@@ -10,6 +10,8 @@
             <template v-if="!edit">
               <span> {{ userFullName(post) }} </span>
               {{ post.text }}
+
+              <img class="post__content-img" :src="post.img" alt="">
             </template>
 
             <PostForm 
@@ -132,6 +134,7 @@ export default {
       delete_post_time: null,
       base64_image: null,
       is_image: false, 
+      undo_time: 10000
     }
   },
   methods: {
@@ -152,12 +155,12 @@ export default {
           this.deletePostConfim(post_id)
           this.is_delete = false
         }
-      }, 10000);
+      }, this.undo_time);
     },
     deletePostConfim(post_id){
       this.$axios.delete(`posts/${post_id}`)
       .then(() => {
-        this.$bus.emit("update-post-list")
+        this.emitLoadPostList()
       })
     },
     updatePost(post_id){
@@ -167,7 +170,7 @@ export default {
         img: this.base64_image
       })
       .then(() => {
-        this.$bus.emit("update-post-list")
+        this.emitLoadPostList()
         this.edit = false
         this.base64_image = ''
       })
@@ -182,7 +185,7 @@ export default {
         like: this.post.like + 1
       })
       .then(() => {
-        this.$bus.emit("update-post-list")
+        this.emitLoadPostList()
       })
     },
     disLikePost(post_id){
@@ -191,13 +194,19 @@ export default {
         dislike: this.post.dislike + 1
       })
       .then(() => {
-        this.$bus.emit("update-post-list")
+        this.emitLoadPostList()
       })
     },
+    emitLoadPostList(){
+      this.$bus.emit("update-post-list")
+    }
   },
   computed: {
     created_at(){
       return dayjs(this.post.created_at).format('DD.MM.YYYY - HH:mm')
+    },
+    undoTime(){
+      return `${this.undo_time}ms`
     }
   }
 };
@@ -234,7 +243,7 @@ export default {
     &.active {
       width: 100%;
       visibility: visible;
-      transition: 10000ms all linear;
+      transition: v-bind(undoTime) all linear;
     }
   }
 
@@ -261,6 +270,12 @@ export default {
       span {
         color: $primary-1;
       }
+    }
+
+    &-img {
+      width: 100%;
+      margin-top: 15px;
+      border-radius: 3px;
     }
   }
 

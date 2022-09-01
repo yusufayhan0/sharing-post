@@ -14,7 +14,7 @@ export default {
   created(){
     this.loadData()
 
-    this.$bus.on("update-post-list", ()=> {
+    this.$bus.on("update-post-list", () => {
       this.loadData()
     })
   },

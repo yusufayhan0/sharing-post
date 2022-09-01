@@ -23,14 +23,6 @@
             class="postform__actions--attach-icon icon-action"
             @click="fileEmit"
           />
-          <!-- <VueFeather
-            type="paperclip"
-            stroke="#C1C8CE"
-            stroke-width="1.5"
-            class="postform__actions-icon action-attach icon-action"
-            size="20"
-            @click="fileEmit"
-          /> -->
 
           <img 
             :src="base64_image"
@@ -155,14 +147,13 @@ export default {
     }
   }
 
-
-
   &__textarea {
     width: 100%;
     height: 72px;
     outline: none;
     border: none;
     resize: none;
+    font-family: $font-family;
 
     &::placeholder {
       color: #C1C8CE;
@@ -206,6 +197,7 @@ export default {
       transition: 500ms all;
       border-radius: 3px;
       cursor: pointer;
+      margin-left: 5px;
 
       &.action{
         width: 20px;

@@ -12,10 +12,14 @@ import appMixin from './mixins/app.js'
 
 const app = createApp(App);
 
-app.mixin(appMixin)
+// Mixins
+[
+  appMixin
+].forEach((mixin) => {
+  app.mixin(mixin)
+});
 
-const emitter = mitt();
-
+//Components
 [
   {name: "VueFeather", value: VueFeather},
   {name: "PostForm", value: PostForm},
@@ -23,9 +27,14 @@ const emitter = mitt();
   {name: "PostList", value: PostList},
   {name: "PostUndo", value: PostUndo},
   {name: "Attach", value: Attach},
-].forEach((componentItem) => app.component(componentItem.name, componentItem.value))
+].forEach((componentItem) => app.component(componentItem.name, componentItem.value));
 
-app.config.globalProperties.$axios = { ...axios }
-app.config.globalProperties.$bus = emitter;
+// Propertieses
+[
+  {key: '$axios', value: axios},
+  {key: '$bus', value: mitt()},
+].forEach(({key, value}) => {
+  app.config.globalProperties[key] = value
+})
 
 app.mount("#app");

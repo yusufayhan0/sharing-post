@@ -55,7 +55,8 @@ export default {
 
 <style lang="scss">
 .post-content {
-  width: 420px;
+  max-width: 420px;
+  width: 100%;
   margin: 0 auto;
 
   .post-form{
